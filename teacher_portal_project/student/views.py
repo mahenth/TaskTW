@@ -40,22 +40,25 @@ class HomeView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        search_query = self.request.GET.get('search')
-        subject_filter = self.request.GET.get('subject')
-
-        students_list = Student.objects.filter(user=self.request.user).order_by('name') # Added order_by for consistent pagination
-
-        if search_query:
-            students_list = students_list.filter(Q(name__icontains=search_query) | Q(subject__icontains=search_query))
+        search_query = self.request.GET.get('search', '')
+        subject_filter = self.request.GET.get('subject', 'all')
         
-        if subject_filter and subject_filter != 'all':
-            students_list = students_list.filter(subject__iexact=subject_filter)
+        students_list = Student.objects.filter(user=self.request.user) # Filter by logged-in user
+        
+        if search_query:
+            students_list = students_list.filter(
+                Q(name__icontains=search_query) | Q(subject__icontains=search_query)
+            )
+        
+        if subject_filter != 'all':
+            students_list = students_list.filter(subject=subject_filter)
 
+        all_subjects = Student.objects.filter(user=self.request.user).values_list('subject', flat=True).distinct()
+        
         paginator = Paginator(students_list, 10)  # Show 10 students per page
-        page = self.request.GET.get('page')
-
+        page_number = self.request.GET.get('page')
         try:
-            students = paginator.page(page)
+            students = paginator.page(page_number)
         except PageNotAnInteger:
             students = paginator.page(1)
         except EmptyPage:
@@ -64,7 +67,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['students'] = students
         context['search_query'] = search_query
         context['subject_filter'] = subject_filter
-        context['all_subjects'] = Student.objects.filter(user=self.request.user).values_list('subject', flat=True).distinct()
+        context['all_subjects'] = all_subjects
         return context
 
 

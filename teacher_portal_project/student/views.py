@@ -197,7 +197,7 @@ class UploadCSVView(LoginRequiredMixin, FormView):
                 )
                 if not created:
                     # If student already exists, update marks by adding the new marks
-                    student.marks += marks
+                    student.marks = marks
                     student.save()
                 # If created, marks are already set by defaults={}
             except (ValueError, KeyError) as e:

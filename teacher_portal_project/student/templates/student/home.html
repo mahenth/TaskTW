@@ -1,0 +1,379 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home - Tailwebs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Existing CSS from previous responses */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fa;
+            padding: 2rem;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+            text-align: center;
+            color: #d32b2b;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .search-filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .search-filter-section input[type="text"],
+        .search-filter-section select,
+        .search-filter-section button {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+        .search-filter-section button {
+            background-color: #d32b2b;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-filter-section button:hover {
+            background-color: #770303;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+            color: #555;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .action-buttons button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+        .action-buttons .edit-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .action-buttons .edit-btn:hover {
+            background-color: #218838;
+        }
+        .action-buttons .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .action-buttons .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .add-btn, .delete-selected-btn { /* Added .delete-selected-btn */
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            margin-right: 10px; /* Space between add and delete selected */
+        }
+        .add-btn:hover, .delete-selected-btn:hover { /* Added .delete-selected-btn */
+            background-color: #0056b3;
+        }
+        .delete-selected-btn {
+            background-color: #dc3545; /* Red color for delete */
+        }
+        .delete-selected-btn:hover {
+            background-color: #c82333;
+        }
+
+
+        /* Modal Styles */
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        .close-modal-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-modal-btn:hover,
+        .close-modal-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-content h3 {
+            text-align: center;
+            color: #d32b2b;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        .input-with-icon {
+            position: relative;
+        }
+        .input-with-icon input {
+            width: calc(100% - 40px); /* Adjust for icon padding */
+            padding: 10px 10px 10px 40px; /* Left padding for icon */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        #modalSubmitBtn {
+            width: 100%;
+            padding: 12px;
+            background: #d32b2b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        #modalSubmitBtn:hover {
+            background: #770303;
+            transform: translateY(-2px);
+        }
+
+        /* Notification styles */
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            font-weight: 500;
+        }
+        #notification.error {
+            background-color: #f44336;
+        }
+
+        /* Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Align items vertically */
+            margin-top: 20px;
+            gap: 5px; /* Space between buttons */
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 6px 10px; /* Reduced padding */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #d32b2b;
+            font-size: 0.85em; /* Reduced font size */
+            min-width: 25px; /* Reduced minimum width */
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #d32b2b;
+            color: white;
+        }
+        .pagination .current {
+            background-color: #d32b2b;
+            color: white;
+            border-color: #d32b2b;
+            font-weight: bold;
+        }
+        .pagination .disabled {
+            color: #ccc;
+            pointer-events: none;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h2>tailwebs.</h2>
+            <div>
+                <a href="{% url 'upload_csv' %}" style="margin-right: 15px; color: #d32b2b; text-decoration: none; font-weight: 500;">Upload CSV</a>
+                <a href="{% url 'logout' %}" style="color: #d32b2b; text-decoration: none; font-weight: 500;">Logout</a>
+            </div>
+        </div>
+
+        <div class="search-filter-section">
+            <input type="text" id="search-input" placeholder="Search by name or subject" value="{{ search_query }}">
+            <select id="subject-filter">
+                <option value="all">All Subjects</option>
+                {% for subject in all_subjects %}
+                    <option value="{{ subject }}" {% if subject == subject_filter %}selected{% endif %}>{{ subject }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="applyFilters()">Apply</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAllStudents"></th> {# Checkbox for selecting all #}
+                    <th>Name</th>
+                    <th>Subject</th>
+                    <th>Mark</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr data-id="{{ s.id }}">
+                    <td><input type="checkbox" class="student-checkbox" data-id="{{ s.id }}"></td> {# Checkbox for individual student #}
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.subject }}</td>
+                    <td>{{ s.marks }}</td>
+                    <td class="action-buttons">
+                        <button class="edit-btn" onclick="editStudent({{ s.id }}, '{{ s.name }}', '{{ s.subject }}', {{ s.marks }})">
+                            <i class="fas fa-edit"></i> {# Edit Icon #}
+                        </button>
+                        <button class="delete-btn" onclick="deleteStudent({{ s.id }})">
+                            <i class="fas fa-trash-alt"></i> {# Delete Icon #}
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {% if students.has_previous %}
+                <a href="?page={{ students.previous_page_number }}&search={{ search_query }}&subject={{ subject_filter }}">Previous</a>
+            {% else %}
+                <span class="disabled">Previous</span>
+            {% endif %}
+
+            {% for i in students.paginator.page_range %}
+                {% if students.number == i %}
+                    <span class="current">{{ i }}</span>
+                {% else %}
+                    <a href="?page={{ i }}&search={{ search_query }}&subject={{ subject_filter }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if students.has_next %}
+                <a href="?page={{ students.next_page_number }}&search={{ search_query }}&subject={{ subject_filter }}">Next</a>
+            {% else %}
+                <span class="disabled">Next</span>
+            {% endif %}
+        </div>
+
+        <div>
+            <button class="add-btn" onclick="openModal('add')">Add</button>
+            <button class="delete-selected-btn" onclick="deleteSelectedStudents()">Delete Selected</button> {# New Delete Selected button #}
+        </div>
+
+        <div id="modal" style="display:none;">
+            <div class="modal-content">
+                <i class="fas fa-times close-modal-btn" onclick="closeModal()"></i>
+                <h3>Add New Student</h3>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i> {# Icon for Name - already present #}
+                        <input id="name" placeholder="Shiv Yadav" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-book"></i>
+                        <input id="subject" placeholder="Physics" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="marks">Mark</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-percent"></i>
+                        <input id="marks" type="number" placeholder="77" />
+                    </div>
+                </div>
+                <button id="modalSubmitBtn" onclick="submitForm()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class=""></div>
+
+    <script src="{% static 'student/main.js' %}"></script>
+</body>
+</html>

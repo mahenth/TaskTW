@@ -33,7 +33,6 @@ The Teacher Portal is a web application built with Django that allows teachers t
     * JavaScript (Vanilla JS for AJAX requests, modal interactions, notifications, search/filter)
 * **Database:**
     * SQLite (default for development)
-    * PostgreSQL / MySQL (can be configured for production, requires respective database drivers like `psycopg2-binary` or `mysqlclient`)
 * **Dependency Management:** `pip` and `requirements.txt`
 
 ## Setup and Installation

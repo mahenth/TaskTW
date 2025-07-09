@@ -94,7 +94,7 @@ class AddStudentView(LoginRequiredMixin, View):
 
         if not created:
             # If student exists, update their marks
-            student.marks = marks # Overwrite existing marks as per initial behavior observed
+            student.marks += marks # Overwrite existing marks as per initial behavior observed
             student.save()
         
         return JsonResponse({'success': True})
@@ -197,7 +197,7 @@ class UploadCSVView(LoginRequiredMixin, FormView):
                 )
                 if not created:
                     # If student already exists, update marks by adding the new marks
-                    student.marks = marks
+                    student.marks += marks
                     student.save()
                 # If created, marks are already set by defaults={}
             except (ValueError, KeyError) as e:
